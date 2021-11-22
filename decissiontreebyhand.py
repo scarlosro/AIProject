@@ -1,7 +1,7 @@
 import numpy as np
 from collections import Counter
 from numpy.lib.shape_base import split
-import panda as pd
+import pandas as pd
 
 def entropy(y):
     hist = np.bincount(y)
