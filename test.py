@@ -14,6 +14,7 @@ from sklearn.metrics import accuracy_score
 import graphviz
 from sklearn import tree
 from sklearn.metrics import classification_report
+import seaborn as sns
 
 def accuracy(y_true, y_pred):
     acc = np.sum(y_true == y_pred)/len(y_true)
@@ -71,5 +72,9 @@ graph=graphviz.Source(dot_data)
 
 print(classification_report(y_test,y_pred_gini))
 
+graphF =  plt.figure(figsize=(150, 155))
+graph = sns.histplot(x=df.safety, hue=df['class'])
+<AxesSubPlot:xlabel='safety', yLabel='Count'>
+graphF.savefig("plot")
 
 
