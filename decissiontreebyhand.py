@@ -9,8 +9,8 @@ def entropy(y):
     return -np.sum(p * np.log2(p) for p in ps if p > 0)
 
 class Node():
-    def __init__(self, feature_index=None, threshold=None, left=None, right=None, var_red=None, *, value=None):
-        self.feature_index = feature_index
+    def __init__(self, feature=None, threshold=None, left=None, right=None, var_red=None, *, value=None):
+        self.feature = feature
         self.threshold = threshold
         self.left = left
         self.right = right
@@ -32,6 +32,10 @@ class DecisionTree():
         self.n_feats = X.shape[1] if not self.n_feats else min (self.n_feats, X.shape[1])
         self.root = self._grow_tree(X,y)
 
+    def predicT(self, X):
+        #traverse tree
+        return np.array([self._traverse_tree(x, self.root) for x in X])
+
     def _grow_tree(self, X, y, depth = 0):
         n_samples, n_features = X.shape
         n_labels = len(np.unique(y))
@@ -42,32 +46,32 @@ class DecisionTree():
         
         feat_idxs = np.random.choice(n_features,self.n_feats, replace=False)    
         #greedy seach
-        beast_feat, best_thresh = self._best_criteria(X, y, feat_idxs)
+        best_feat, best_thresh = self._best_criteria(X, y, feat_idxs)
 
         left_idxs, right_idxs = self._split(X[:, beast_feat], best_thresh)
         left = self._grow_tree(X[left_idxs, :], y[left_idxs], depth+1)
         right = self._grow_tree(X[right_idxs, :], y[right_idxs], depth+1)
-        return Node(beast_feat, best_thresh, left, right)
+        return Node(best_feat, best_thresh, left, right)
 
     def _best_criteria(self, X, y, feat_idxs):
         best_gain = -1
-        split_idx, split_threh = None, None
+        split_idx, split_thresh = None, None
         for feat_idx in feat_idxs:
-            X_columns = X[:, feat_idx]
-            thresholds = np.unique(X_columns)
+            X_column = X[:, feat_idx]
+            thresholds = np.unique(X_column)
             for threshold in thresholds:
                 gain = self._information_gain(y, X_columns, threshold)
                 if gain > best_gain:
                     best_gain = gain
                     split_idx = feat_idx
-                    split_threh = threshold
+                    split_thresh = threshold
         return split_idx, split_threh
 
-    def _information_gain(self, y, X_column, split_threh):
+    def _information_gain(self, y, X_column, split_thresh):
         #parent E
         parent_entro = entropy(y)
         #generate split
-        left_idxs, right_idxs = self._split(X_column, split_threh)
+        left_idxs, right_idxs = self._split(X_column, split_thresh)
         if len(left_idxs) == 0 or len(right_idxs) == 0:
             return 0
         #weighted average child E
@@ -78,16 +82,15 @@ class DecisionTree():
         
         #return ig
         ig = parent_entro - child_ent
+        return ig
 
-    def _split(self, X_column, split_threh):
-        left_idxs = np.argwhere(X_column <= split_threh).flatten()
-        right_idxs = np.argwhere(X_column > split_threh).flatten()
+    def _split(self, X_column, split_threhs):
+        left_idxs = np.argwhere(X_column <= split_thresh).flatten()
+        right_idxs = np.argwhere(X_column > split_thresh).flatten()
 
         return left_idxs, right_idxs
     
-    def predicT(self, X):
-        #traverse tree
-        return np.array([self._traverse_tree(x) for x in X])
+
     
     def _traverse_tree(self, x, node):
         if node.is_leaf_node():

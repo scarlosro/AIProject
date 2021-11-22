@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.tree import plot_tree
 from sklearn.model_selection import train_test_split
 from pandas.core.common import SettingWithCopyWarning
@@ -38,14 +38,13 @@ print(expl_n)
 
 X_train, X_test, y_train, y_test = train_test_split(expl_n, obj, test_size=0.2)
 
-model = DecisionTreeClassifier(min_samples_split=2, max_depth=3)
+model = DecisionTreeRegressor(min_samples_split=2, max_depth=3)
 
 model.fit(X_train, y_train)
 model.score(X_test, y_test)
-DecisionTreeClassifier()
 
-treeFigure = plt.figure(figsize=(15, 7.5))
+treeFigure = plt.figure(figsize=(150, 155), dpi=42)
 
-ex = plot_tree(model, feature_names=expl_n.columns, rounded=True, class_names=["No stroke", "Stroke"], filled=True)
+ex = plot_tree(model, feature_names=expl_n.columns, rounded=True, class_names=["No stroke", "Stroke"], filled=False)
 
-treeFigure.savefig("decission.png")
+treeFigure.savefig("decission.jpg")
