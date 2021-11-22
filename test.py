@@ -77,3 +77,10 @@ graph = sns.histplot(x=df.safety, hue=df['class'])
 graphF.savefig("plot")
 
 
+clf_en = DecisionTreeClassifier(criterion='gini', max_depth=3, random_state=0)
+clf_en.fit(X_train, y_train)
+y_pred_en = clf_en.predict(X_test)
+
+print("Accuracy with entropy ", accuracy_score(y_test, y_pred_en))
+
+
