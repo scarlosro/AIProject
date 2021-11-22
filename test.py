@@ -70,17 +70,17 @@ dot_data = tree.export_graphviz(clf_gini, out_file=None, feature_names=X_train.c
 graph=graphviz.Source(dot_data)
 
 
-print(classification_report(y_test,y_pred_gini))
 
 graphF =  plt.figure(figsize=(150, 155))
 graph = sns.histplot(x=df.safety, hue=df['class'])
 graphF.savefig("plot")
 
 
-clf_en = DecisionTreeClassifier(criterion='gini', max_depth=3, random_state=0)
+clf_en = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=0)
 clf_en.fit(X_train, y_train)
 y_pred_en = clf_en.predict(X_test)
-
-print("Accuracy with entropy ", accuracy_score(y_test, y_pred_en))
+y_pred_train_en = clf_en.predict(X_train)
+print("Accuracy with entropy test ", accuracy_score(y_test, y_pred_en))
+print("Accuracy with entropy training", accuracy_score(y_train, y_pred_train_en))
 
 
