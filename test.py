@@ -74,7 +74,6 @@ print(classification_report(y_test,y_pred_gini))
 
 graphF =  plt.figure(figsize=(150, 155))
 graph = sns.histplot(x=df.safety, hue=df['class'])
-<AxesSubPlot:xlabel='safety', yLabel='Count'>
 graphF.savefig("plot")
 
 
