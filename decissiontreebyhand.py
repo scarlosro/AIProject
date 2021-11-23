@@ -4,8 +4,8 @@ from numpy.lib.shape_base import split
 import pandas as pd
 
 class Node():
-    def __init__(self, feature=None, threshold=None, left=None, right=None, info_gain=None, *, value=None):
-        self.feature = feature
+    def __init__(self, feature_index=None, threshold=None, left=None, right=None, info_gain=None, value=None):
+        self.feature_index = feature_index
         self.threshold = threshold
         self.left = left
         self.right = right
@@ -16,7 +16,7 @@ class Node():
         return self.value is not None
 
 class DecisionTree():
-    def __init__(self, min_samples_split=2, max_depth=100):
+    def __init__(self, min_samples_split=2, max_depth=2):
         #initializing the root of the tree
         self.root = None
         
@@ -86,6 +86,15 @@ class DecisionTree():
             entropy += -p_cls * np.log2(p_cls)
         return entropy
 
+    def gini_index(self, y):
+        ''' function to compute gini index '''
+        
+        class_labels = np.unique(y)
+        gini = 0
+        for cls in class_labels:
+            p_cls = len(y[y == cls]) / len(y)
+            gini += p_cls**2
+        return 1 - gini
     
     def calculate_leaf_value(self, Y):
         Y = list(Y)
@@ -101,6 +110,7 @@ class DecisionTree():
         else:
             print("X_"+str(tree.feature_index), "<=", tree.threshold, "?", tree.info_gain)
             print("%sleft:" % (indent), end="")
+            self.print_tree(tree.left, indent + indent)
             print("%sright:" % (indent), end="")
             self.print_tree(tree.right, indent + indent)
 
@@ -110,6 +120,7 @@ class DecisionTree():
 
     def predict(self, X, tree):
         predictions= [self.make_prediction(x, self.root) for x in X]
+        return predictions
 
     def make_prediction(self, x, tree):
         if tree.value!=None: return tree.value

@@ -70,6 +70,7 @@ dot_data = tree.export_graphviz(clf_gini, out_file=None, feature_names=X_train.c
 graph=graphviz.Source(dot_data)
 
 
+#print(clf_gini.predict([1,2,2,2,2,2.5]),y_test)
 
 graphF =  plt.figure(figsize=(150, 155))
 graph = sns.histplot(x=df.safety, hue=df['class'])
